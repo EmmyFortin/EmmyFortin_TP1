@@ -40,8 +40,8 @@ class MainWindow(QMainWindow):
                 assets_data = json.load(file) # assets_data = contenu du fichier .json
                 print("Fichier chargé :", json_file) # Debug pour savoir quel fichier est chargé (A SUPPRIMER À LA FIN)
 
-            # Récupérer le nom des keys (nom des propriétés des assets)
-            # Création d'une liste qui va contenir le nom des keys (noms des colonnes)
+            # Récupérer les keys (nom des propriétés des assets)
+            # Création d'une liste qui va contenir le nom des colonnes (nom des propriétés des assets)
             column_names = []
 
             # Pour chaque asset (objet) dans le fichier .json loadé on cherche le nom chaque propriété de l'asset ("id", "name", etc) si le nom de la propriété n'est pas déjà dans la liste des noms des colonnes on l'ajoute
@@ -82,7 +82,6 @@ class MainWindow(QMainWindow):
 
     # Fonction pour remplir le tableau avec paramètres d'entrés 
     def fill_spreadsheet(self, assets_data, column_names):
-        print("fill est appeller")
 
         # On met le nombre de rangés équivalente à au nombre (lenght) des données
         self.my_spreadsheet.setRowCount(len(assets_data))
@@ -94,8 +93,35 @@ class MainWindow(QMainWindow):
         self.my_spreadsheet.setHorizontalHeaderLabels(column_names)
 
         # Afficher les données dans le tableau
-        # for row_index, asset in enumerate(data):
-        #     for col_index, key in enumerate(columns_name):
+# La boucle fait le tour de tout les assets dans assets_data. À chaque fois que la boucle se fait, enumerate() donne a row_index la position(index)(qui incrémente à chaque tour) de l,asset dans le fichier .json et donne les propriété de l'asset qui correspond à l'index.
+        
+        row_index = 0
+
+        for asset in assets_data:
+
+            column_index = 0
+
+            for column_name in column_names:
+                cell_value = asset[column_name]
+                spreadsheet_item = QTableWidgetItem(str(cell_value))
+                self.my_spreadsheet.setItem(row_index, column_index, spreadsheet_item)
+
+                column_index+=1
+
+        row_index+=1
+
+
+
+
+
+
+
+        # for row_index, asset in enumerate(assets_data):
+        #     # Pour chaque nom de colonne dans la liste column_names la fonction enumerate donne le numéro de colonne et le nom de cette colonne
+        #     for column_index, property_name in enumerate(column_names):
+        #         cell_value = asset[property_name]
+        #         spreadsheet_item = QTableWidgetItem(str(cell_value))
+        #         self.my_spreadsheet.setItem(row_index, column_index, spreadsheet_item)
 
         # Pour que le tableau s'adapte à la taille du contenu des colonnes
         self.my_spreadsheet.resizeColumnsToContents()
