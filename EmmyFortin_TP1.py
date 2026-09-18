@@ -1,22 +1,34 @@
-from PySide6.QtWidgets import QApplication, QWidget, QMessageBox, QTableWidget, QLineEdit, QTableWidgetItem
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QTableWidget, QLineEdit, QTableWidgetItem
 import sys
 import json
 
 
-# Création d'une class pour créer et gérer le tableau avec QTableWidget
-class MySpreadsheet(QTableWidget):
-    # __init__ = constructeur qui est appellé automatiquement quand je créer un objet 
+
+
+
+
+
+# Création d'une class pour créer et afficher la fenêtre qui contiendera la grille
+class MainWindow(QMainWindow):
+    # __init__ = constructeur qui est appellé automatiquement quand je créer un objet (self = associé à cette fenetre (MainWindow))
     def __init__(self):
         super().__init__()
 
-        # Donne un nom à mon tableau
-        self.setWindowTitle("Gestion de données des fichiers") 
+        # Donne un nom à mon objet MainWindow
+        self.setWindowTitle("Gestion de données des fichiers")
+        self.create_spreadsheet() 
 
+    # Fonction pour créer et gérer mon tableau (dans la MainWindow) qui peut contenir autant d'éléments que le .JSON en contient
+    def create_spreadsheet(self):
+        # Permet de créer le tableau dans MainWindow
+        self.my_spreadsheet = QTableWidget()
+      
+        # Détermine le nombre de colonnes et rangée requises pour les données reçu
+        self.my_spreadsheet.setColumnCount(8)
+        self.my_spreadsheet.setRowCount(8)
 
-
-
-
-
+        # Place le widget dans ma fenetre
+        self.setCentralWidget(self.my_spreadsheet)
 
 
 
@@ -27,12 +39,13 @@ class MySpreadsheet(QTableWidget):
 def main():
     # QApplication est le ficher correspondant à l'application. C'est donc ce fichier (EmmyFortin_TP1.py) car c'est l'index 0 des argv. Permet l'utilisation des lignes de commandes 
     app = QApplication(sys.argv)
+    
 
-    # Création de mon tableau
-    my_spreadsheet = MySpreadsheet()
+    # Création de ma fênetre (le constructeur est appellé)
+    window = MainWindow()
 
-    # Affichage de mon tableau car il est caché par défaut
-    my_spreadsheet.show() 
+    # Affichage de ma fenetre car elle est caché par défaut
+    window.show()
 
     # Boucle d'exécution de l'application
     sys.exit(app.exec())
@@ -46,14 +59,17 @@ if __name__ == "__main__":
 # Le paramètre 0 est le fichier .py en lui même donc les fichiers .json sont les paramètres 1 mais puisqu'on doit loader un ficher à la fois c'est la commande : python EmmyFortin_TP1.py data_small.json ou python EmmyFortin_TP1.py data_large.json qui détermine quel fichier .json est utilisé.
 # Pour détecter les erreurs de chargement de données, il faut mettre un try: il essaye de faire les actions dans sa portée mais s'il n'y arrive pas il passe au execpt
 try:
+
     # Récupération du fichier en paramètre (fichier .json soit data_small ou data_large)
     json_file = sys.argv[1]
 
     # Chargement des données du ficher .json reçu en paramètre
     with open(json_file,"r",encoding="utf-8") as file:
         data = json.load(file)
+        
 
-    print("Fichier chargé :", json_file) # Debug pour savoir quel fichier est chargé (A SUPPRIMER À LA FIN)
+
+    #print("Fichier chargé :", json_file) # Debug pour savoir quel fichier est chargé (A SUPPRIMER À LA FIN)
 
 #2 Détecter les erreurs de chargement de fichier avec try except (et mettre un message d'erreur) QMessageBox.Critical() for error message ( makes a error windows box)
 
