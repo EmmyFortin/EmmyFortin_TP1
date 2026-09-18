@@ -30,8 +30,33 @@ class MainWindow(QMainWindow):
         # Place le widget dans ma fenetre
         self.setCentralWidget(self.my_spreadsheet)
 
+        # Appelle la fonction load data
+        self.load_data()
+
+    # fonction pour loader le data
+    def load_data(self):
+        try:
+            # Récupération du fichier en paramètre (fichier .json soit data_small ou data_large)
+            json_file = sys.argv[1]
+           
+            # Chargement des données du ficher .json reçu en paramètre
+            with open(json_file,"r",encoding="utf-8") as file:
+                data = json.load(file)
+                # si ca fonctionne
+                self.fill_spreadsheet(data)
+                print("Fichier chargé :", json_file) # Debug pour savoir quel fichier est chargé (A SUPPRIMER À LA FIN)
 
 
+            #------------------------------- DEMANDER SI ON PEUT FAIRE UN EXCEPTION 
+        except Exception as error: 
+            QMessageBox.critical(None, "Erreur", f"Erreur ici:{error} ")
+            sys.exit()
+        
+
+    # Fonction pour remplir le tableau avec paramètres d'entrés 
+    def fill_spreadsheet(self, data):
+        self.my_spreadsheet.setRowCount(len(data))
+        print(len(data))
 
 
 # Début de l'application
