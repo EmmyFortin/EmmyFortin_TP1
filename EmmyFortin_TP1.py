@@ -3,8 +3,44 @@ import sys
 import json
 
 
-# QApplication est le ficher correspondant à l'application. C'est donc ce fichier (EmmyFortin_TP1.py) car c'est l'index 0 des argv. Permet l'utilisation des lignes de commandes 
-app = QApplication(sys.argv)
+# Création d'une class pour créer et gérer le tableau avec QTableWidget
+class MySpreadsheet(QTableWidget):
+    # __init__ = constructeur qui est appellé automatiquement quand je créer un objet 
+    def __init__(self):
+        super().__init__()
+
+        # Donne un nom à mon tableau
+        self.setWindowTitle("Gestion de données des fichiers") 
+
+
+
+
+
+
+
+
+
+
+
+# Début de l'application
+# Fonction main pour le début de l'application
+def main():
+    # QApplication est le ficher correspondant à l'application. C'est donc ce fichier (EmmyFortin_TP1.py) car c'est l'index 0 des argv. Permet l'utilisation des lignes de commandes 
+    app = QApplication(sys.argv)
+
+    # Création de mon tableau
+    my_spreadsheet = MySpreadsheet()
+
+    # Affichage de mon tableau car il est caché par défaut
+    my_spreadsheet.show() 
+
+    # Boucle d'exécution de l'application
+    sys.exit(app.exec())
+
+# Indique quand mon programme commence (Si ce ficher est stand alone on appelle la fonction main )
+if __name__ == "__main__":
+    main()
+
 
 #1 Charger en mémoire les données issues du fichier JSON reçu en paramètre.
 # Le paramètre 0 est le fichier .py en lui même donc les fichiers .json sont les paramètres 1 mais puisqu'on doit loader un ficher à la fois c'est la commande : python EmmyFortin_TP1.py data_small.json ou python EmmyFortin_TP1.py data_large.json qui détermine quel fichier .json est utilisé.
@@ -44,12 +80,16 @@ except Exception as error:
 
 #3 Créer une grille avec Pyside6 qui peut contenir autant d'éléments qu'il y a dans les fichiers JSON (QTableWidget)
 # Création du QTableWidget (ma fênetre de tableau)
-my_spreadsheet = QTableWidget(1,8)
+
+
+
+
+#my_spreadsheet = QTableWidget(1,8)
 # Affichage de mon tableau car il est caché par défaut
-my_spreadsheet.show() 
+#my_spreadsheet.show() 
 
 # # Boucle d'exécution de l'application
-app.exec()
+#sys.exit(app.exec())
 
 #----- SI PROF VEUT QU'ON BYPASS L'ERREUR ET QU'ON OUVRE QUAND MEME LE TABLEAU (ON PRÉCISE L'ÉLÉMENT IGNORÉ ):
 # Création d'une liste vide des données valides (------------------Je mets tu juste les éléments  qu'il demande d'afficher dans le tableau (nom, taille et quantité d'éléments) ou je met tout ?)
