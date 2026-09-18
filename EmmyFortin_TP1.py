@@ -42,11 +42,21 @@ class MainWindow(QMainWindow):
             # Chargement des données du ficher .json reçu en paramètre
             with open(json_file,"r",encoding="utf-8") as file:
                 data = json.load(file)
-                # si ca fonctionne
-                self.fill_spreadsheet(data)
+                
+                # si ca fonctionne on appelle la fonction fill spreadsheet
+                
                 print("Fichier chargé :", json_file) # Debug pour savoir quel fichier est chargé (A SUPPRIMER À LA FIN)
 
+            # récupérer les nom des colonnes
+            # Liste vide pour créer la variable car si le data est loadé les colonnes existent
+            columns = []
 
+            for objet in data:
+                for key in objet:
+                    if key not in columns:
+                        columns.append(key)
+
+            self.fill_spreadsheet(data, columns)
             #------------------------------- DEMANDER SI ON PEUT FAIRE UN EXCEPTION 
         except Exception as error: 
             QMessageBox.critical(None, "Erreur", f"Erreur ici:{error} ")
@@ -54,9 +64,12 @@ class MainWindow(QMainWindow):
         
 
     # Fonction pour remplir le tableau avec paramètres d'entrés 
-    def fill_spreadsheet(self, data):
+    def fill_spreadsheet(self, data, columns):
+        # On met le nombre de rangés équivalente à au nombre (lenght) des données
         self.my_spreadsheet.setRowCount(len(data))
-        print(len(data))
+        self.my_spreadsheet.setColumnCount(len(columns))
+        
+
 
 
 # Début de l'application
