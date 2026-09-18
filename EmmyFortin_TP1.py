@@ -37,21 +37,21 @@ class MainWindow(QMainWindow):
            
             # Chargement des données du ficher .json reçu en paramètre
             with open(json_file,"r",encoding="utf-8") as file:
-                data = json.load(file) # data = contenu du fichier .json
+                assets_data = json.load(file) # assets_data = contenu du fichier .json
                 print("Fichier chargé :", json_file) # Debug pour savoir quel fichier est chargé (A SUPPRIMER À LA FIN)
 
-            # Récupérer le nom des keys
+            # Récupérer le nom des keys (nom des propriétés des assets)
             # Création d'une liste qui va contenir le nom des keys (noms des colonnes)
-            columns_name = []
+            column_names = []
 
-            # Pour chaque asset (objet) dans le data loadé on cherche pour chaque key ("id", "name") dans l'asset si la key n,est pas déjà dans la colonne on l'ajoute
-            for asset in data:
-                for key in asset:
-                    if key not in columns_name:
-                        columns_name.append(key)
+            # Pour chaque asset (objet) dans le fichier .json loadé on cherche le nom chaque propriété de l'asset ("id", "name", etc) si le nom de la propriété n'est pas déjà dans la liste des noms des colonnes on l'ajoute
+            for asset in assets_data:
+                for property_name in asset:
+                    if property_name not in column_names:
+                        column_names.append(property_name)
                     
             # Appelle la fonction pour remplir le tableau
-            self.fill_spreadsheet(data, columns_name)
+            self.fill_spreadsheet(assets_data, column_names)
 
 
         #2 Détecter les erreurs de chargement de fichier avec try except (et mettre un message d'erreur) QMessageBox.Critical() for error message ( makes a error windows box)
@@ -81,17 +81,21 @@ class MainWindow(QMainWindow):
        
 
     # Fonction pour remplir le tableau avec paramètres d'entrés 
-    def fill_spreadsheet(self, data, columns_name):
+    def fill_spreadsheet(self, assets_data, column_names):
         print("fill est appeller")
 
         # On met le nombre de rangés équivalente à au nombre (lenght) des données
-        self.my_spreadsheet.setRowCount(len(data))
+        self.my_spreadsheet.setRowCount(len(assets_data))
 
         # On met le nombre de colonnes équivalente à au nombre (lenght) des données
-        self.my_spreadsheet.setColumnCount(len(columns_name))
+        self.my_spreadsheet.setColumnCount(len(column_names))
 
         # On met les Labels des colonnes (correspond aux noms des keys)
-        self.my_spreadsheet.setHorizontalHeaderLabels(columns_name)
+        self.my_spreadsheet.setHorizontalHeaderLabels(column_names)
+
+        # Afficher les données dans le tableau
+        # for row_index, asset in enumerate(data):
+        #     for col_index, key in enumerate(columns_name):
 
         # Pour que le tableau s'adapte à la taille du contenu des colonnes
         self.my_spreadsheet.resizeColumnsToContents()
