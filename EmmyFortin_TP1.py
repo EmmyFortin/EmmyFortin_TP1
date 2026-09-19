@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QTableWidget, QLineEdit, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QPushButton, QLabel
-from PySide6.QtCore import QMargins
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QPushButton, QLabel
+from PySide6.QtCore import QMargins, Qt
 import sys
 import json
 
@@ -19,18 +19,20 @@ class MainWindow(QMainWindow):
     # Fonction pour créer et gérer mon tableau (dans la MainWindow) qui peut contenir autant d'éléments que le .JSON en contient
     def create_spreadsheet(self):
 
+
         # Permet de créer le tableau dans MainWindow
         self.my_spreadsheet = QTableWidget()
 
         # Titre pour les boutons de tri
-        self.sorting_title = QLabel("Sort by")
+        self.sorting_title = QLabel("Trier les Ids par")
 
         # Création des boutons pour trier les données en ordre croissant et décroissant qui appelle leur fonction de tri
-        self.ascending_button = QPushButton("Ascending order")
-        #action du bouton
+        self.ascending_button = QPushButton("Ordre Ascendant")
+        self.ascending_button.clicked.connect(self.sort_by_ascending)
 
-        self.descending_button = QPushButton("Descending order")
-        # action du bouton
+        self.descending_button = QPushButton("Ordre Descendant")
+        self.descending_button.clicked.connect(self.sort_by_descending)
+
 
         # QHBoxLayout place les widgets à l'horizontal
         filters_layout = QHBoxLayout()
@@ -151,6 +153,12 @@ class MainWindow(QMainWindow):
                 # Permet de placer le QTableWidgetItem dans le tableau à la rangée et à la colonne présemtent parcourue
                 self.my_spreadsheet.setItem(row_index, column_index, spreadsheet_item)
 
+        # Place de base les éléments par ordre croissant (basé sur id) si on change la valeur du id dans le .json (ex on inverse le 03 avec le 02)
+        self.sort_by_ascending()
+
+        # Active le tri par colonne
+        self.my_spreadsheet.setSortingEnabled(True)
+
         # Pour que le tableau s'adapte à la taille du contenu des colonnes et des rangées
         # Je veux un display parfait à l'ouverture du tableau
         # Calcul qui addition la largeur (h) des headers de mes colonnes avec la longueur (v) des headers de mes rangées avec l'épaisseur de la bordure exterieur du tableau qui est multiplié par deux (pour gauche et droite)
@@ -167,7 +175,14 @@ class MainWindow(QMainWindow):
         self.my_spreadsheet.setMinimumWidth(spreadsheet_width)
         self.adjustSize()
 
+    # Fonction pour trier par id  le 0 correspond à l'index de la colonne qui contient les ids
+    # Tri en ordre croissant
+    def sort_by_ascending(self):
+        self.my_spreadsheet.sortItems(0, Qt.AscendingOrder)
 
+    # Tri en ordre décroissant
+    def sort_by_descending(self):
+        self.my_spreadsheet.sortItems(0, Qt.DescendingOrder)
 
 
 # Début de l'application
@@ -190,11 +205,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-
-
-
-
-#4 Implémenter le tri en ordre croissant et décroissant par colonne.
 
 #5 Fonction de recherche 
 
