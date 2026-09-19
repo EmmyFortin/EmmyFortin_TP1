@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QCompleter
-from PySide6.QtCore import QMargins, Qt
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit
+from PySide6.QtCore import QMargins, Qt, QFileInfo
 import sys
 import json
 
@@ -33,6 +33,11 @@ class MainWindow(QMainWindow):
         self.descending_button = QPushButton("Ordre Descendant")
         self.descending_button.clicked.connect(self.sort_by_descending)
 
+        # Création des textes de bas de page pour les informations du fichier
+        self.displayed_file_name = QLabel()
+        self.file_size = QLabel()
+        self.elements_number = QLabel()
+
 
         # QHBoxLayout place les widgets à l'horizontal
         filters_layout = QHBoxLayout()
@@ -50,6 +55,9 @@ class MainWindow(QMainWindow):
         layout.addWidget(searchbar)
         layout.addLayout(filters_layout)
         layout.addWidget(self.my_spreadsheet)
+        layout.addWidget(self.displayed_file_name)
+        layout.addWidget(self.file_size)
+        layout.addWidget(self.elements_number)
 
         # Le container contient tout les widgets
         container = QWidget()
@@ -76,8 +84,21 @@ class MainWindow(QMainWindow):
            
             # Chargement des données du ficher .json reçu en paramètre
             with open(json_file,"r",encoding="utf-8") as file:
-                assets_data = json.load(file) # assets_data = contenu du fichier .json
-                print("Fichier chargé :", json_file) # Debug pour savoir quel fichier est chargé (A SUPPRIMER À LA FIN)
+                assets_data = json.load(file) # assets_data = contenu du fichier .json<
+
+            # Récupere les informations du fichier pour pouvoir les afficher dans le bas de la fênetre
+            file_infos = QFileInfo(json_file)
+
+            # Trouver le nom du fichier chargé, la taille en mémoire et le nombre d'élément du fichier
+            file_name = file_infos.fileName()
+            file_size = file_infos.size()
+            number_of_elements = len(assets_data)
+
+            # Mettre les infos dans les QLabels
+            self.displayed_file_name.setText(f"Nom du fichier chargé : {file_name}")
+            self.file_size.setText(f"Taille du fichier en mémoire : {file_size} octets")
+            self.elements_number.setText(f"Nombre d'éléments du fichier : {number_of_elements}")
+
 
             # Récupérer les keys (nom des propriétés des assets) pour les afficher en tant que label pour chaque colonne
             # Création d'une liste qui va contenir le nom des colonnes (nom des propriétés des assets)
@@ -250,6 +271,6 @@ if __name__ == "__main__":
     main()
 
 
-#5 Fonction de recherche 
 
-#6 Afficher le nom, la taille en mémoire et le nombre d’éléments du fichier
+
+
