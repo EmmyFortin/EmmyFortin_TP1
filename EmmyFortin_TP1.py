@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QTableWidget, QLineEdit, QTableWidgetItem
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QTableWidget, QLineEdit, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QPushButton, QLabel
+from PySide6.QtCore import QMargins
 import sys
 import json
 
@@ -17,11 +18,41 @@ class MainWindow(QMainWindow):
 
     # Fonction pour créer et gérer mon tableau (dans la MainWindow) qui peut contenir autant d'éléments que le .JSON en contient
     def create_spreadsheet(self):
+
         # Permet de créer le tableau dans MainWindow
         self.my_spreadsheet = QTableWidget()
-        
+
+        # Titre pour les boutons de tri
+        self.sorting_title = QLabel("Sort by")
+
+        # Création des boutons pour trier les données en ordre croissant et décroissant qui appelle leur fonction de tri
+        self.ascending_button = QPushButton("Ascending order")
+        #action du bouton
+
+        self.descending_button = QPushButton("Descending order")
+        # action du bouton
+
+        # QHBoxLayout place les widgets à l'horizontal
+        filters_layout = QHBoxLayout()
+        filters_layout.addWidget(self.sorting_title)
+        filters_layout.addWidget(self.ascending_button)
+        filters_layout.addWidget(self.descending_button)
+
+        # QVBox Layout place les widgets à la verticale
+        layout = QVBoxLayout()
+        layout.addLayout(filters_layout)
+        layout.addWidget(self.my_spreadsheet)
+
+        # Le container contient tout les widgets
+        container = QWidget()
+        container.setLayout(layout)
+
+        # Donne les valeurs pour les margins de la fênetre
+        margins = QMargins(4,10,4,10)
+        self.setContentsMargins(margins)
+
         # Place le widget dans ma fenetre
-        self.setCentralWidget(self.my_spreadsheet)
+        self.setCentralWidget(container)
 
         # Appelle la fonction load data
         self.load_data()
@@ -120,8 +151,21 @@ class MainWindow(QMainWindow):
                 # Permet de placer le QTableWidgetItem dans le tableau à la rangée et à la colonne présemtent parcourue
                 self.my_spreadsheet.setItem(row_index, column_index, spreadsheet_item)
 
-        # Pour que le tableau s'adapte à la taille du contenu des colonnes
-        self.my_spreadsheet.resizeColumnsToContents()
+        # Pour que le tableau s'adapte à la taille du contenu des colonnes et des rangées
+        # Je veux un display parfait à l'ouverture du tableau
+        # Calcul qui addition la largeur (h) des headers de mes colonnes avec la longueur (v) des headers de mes rangées avec l'épaisseur de la bordure exterieur du tableau qui est multiplié par deux (pour gauche et droite)
+        spreadsheet_width = (
+            self.my_spreadsheet.horizontalHeader().length()
+            + self.my_spreadsheet.verticalHeader().width()
+            + self.my_spreadsheet.frameWidth() * 2
+        )
+
+        # Pour enlever la scroll bar horizontal qui est présent dans le grand tableau (à cause de la scroll bar vertical)
+        if self.my_spreadsheet.verticalScrollBar().maximum() > 0:
+            spreadsheet_width += self.my_spreadsheet.verticalScrollBar().sizeHint().width()
+
+        self.my_spreadsheet.setMinimumWidth(spreadsheet_width)
+        self.adjustSize()
 
 
 
