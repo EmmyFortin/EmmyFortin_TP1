@@ -40,16 +40,16 @@ class MainWindow(QMainWindow):
                 assets_data = json.load(file) # assets_data = contenu du fichier .json
                 print("Fichier chargé :", json_file) # Debug pour savoir quel fichier est chargé (A SUPPRIMER À LA FIN)
 
-            # Récupérer les keys (nom des propriétés des assets)
+            # Récupérer les keys (nom des propriétés des assets) pour les afficher en tant que label pour chaque colonne
             # Création d'une liste qui va contenir le nom des colonnes (nom des propriétés des assets)
             column_names = []
 
-            # Pour chaque asset (objet) dans le fichier .json loadé on cherche le nom chaque propriété de l'asset ("id", "name", etc) si le nom de la propriété n'est pas déjà dans la liste des noms des colonnes on l'ajoute
+            # Pour chaque asset (objet) dans le fichier .json loadé on cherche le nom chaque propriété de l'asset ("id", "name", etc) si le nom de la propriété n'est pas déjà dans la liste des noms des colonnes on l'ajoute. À la fin de la boucle column_name contient le nom de toute les propriétes des assets
             for asset in assets_data:
                 for property_name in asset:
                     if property_name not in column_names:
                         column_names.append(property_name)
-                    
+
             # Appelle la fonction pour remplir le tableau
             self.fill_spreadsheet(assets_data, column_names)
 
@@ -91,14 +91,33 @@ class MainWindow(QMainWindow):
 
         # On met les Labels des colonnes (correspond aux noms des keys)
         self.my_spreadsheet.setHorizontalHeaderLabels(column_names)
-        
+
+
 
         # Afficher les données dans le tableau
-        for row_index, asset in enumerate(assets_data):
-            # Pour chaque nom de colonne dans la liste column_names la fonction enumerate donne le numéro de colonne et le nom de cette colonne
-            for column_index, property_name in enumerate(column_names):
-                cell_value = asset[property_name]
+
+        # enumerate a besoin d'être effectué en priorité (avant le for loop) pour que la boucle sache sur quoi elle va looper (variables row_index et current_asset on pas encore eu de valeur)
+        # enumerate parcourt tout les éléments(assets) dans assets_data (contenu du .json) et donne un index à chaque asset. 
+        # Le résultat du enumerate fourni à chaque tour une paire de donnée ex: row_index = 0 et current_asset = asset1, row_index = 1 et current_asset = asset2 etc.
+        # Le for loop parcourt les paires une par une
+        # À chaque tour, l'index qu'il(enumrate) fournit est stocké dans row_index et l'asset correspondant (à cet index) est stocké dans current_asset
+         
+        for row_index, current_asset in enumerate(assets_data):
+           
+            # enumerate parcourt tout les noms des colonnes dans la liste column_names et donne un index à chacun
+            # Le résultat du enumerate fourni à chaque tour une paire de donnée
+            # Le for loop parcout les paires une par une
+            # À chaque tour, l'index qu'il(enumerate) fournit est stocké dans column_index et le nom de la colonne correspondant (à cet index) est stocké dans current_column_name
+
+            for column_index, current_column_name in enumerate(column_names):
+
+                # On stocke la valeur de la propriété(id, name etc.) de l'asset parcouru qui correspond au nom de la colonne parcourue ( "id", "name" etc.).
+                cell_value = current_asset[current_column_name]
+
+                # Converti la valeur de cell_value en string et création d'un QTableWidgetItem pour que la valeur puisse être afficher dans le tableau
                 spreadsheet_item = QTableWidgetItem(str(cell_value))
+
+                # Permet de placer le QTableWidgetItem dans le tableau à la rangée et à la colonne présemtent parcourue
                 self.my_spreadsheet.setItem(row_index, column_index, spreadsheet_item)
 
         # Pour que le tableau s'adapte à la taille du contenu des colonnes
