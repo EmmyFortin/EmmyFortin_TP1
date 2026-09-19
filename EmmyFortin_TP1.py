@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QPushButton, QLabel
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QCompleter
 from PySide6.QtCore import QMargins, Qt
 import sys
 import json
@@ -40,8 +40,14 @@ class MainWindow(QMainWindow):
         filters_layout.addWidget(self.ascending_button)
         filters_layout.addWidget(self.descending_button)
 
+        # Création de la barre de recherche (QLineEdit permet d'éditer le texte)
+        searchbar = QLineEdit(placeholderText="Rechercher...")
+        searchbar.textChanged.connect(self.update_search)
+
+
         # QVBox Layout place les widgets à la verticale
         layout = QVBoxLayout()
+        layout.addWidget(searchbar)
         layout.addLayout(filters_layout)
         layout.addWidget(self.my_spreadsheet)
 
@@ -158,7 +164,7 @@ class MainWindow(QMainWindow):
 
         # Active le tri par colonne
         self.my_spreadsheet.setSortingEnabled(True)
-
+     
         # Pour que le tableau s'adapte à la taille du contenu des colonnes et des rangées
         # Je veux un display parfait à l'ouverture du tableau
         # Calcul qui addition la largeur (h) des headers de mes colonnes avec la longueur (v) des headers de mes rangées avec l'épaisseur de la bordure exterieur du tableau qui est multiplié par deux (pour gauche et droite)
@@ -183,6 +189,44 @@ class MainWindow(QMainWindow):
     # Tri en ordre décroissant
     def sort_by_descending(self):
         self.my_spreadsheet.sortItems(0, Qt.DescendingOrder)
+
+    # Fonction de recherche et d'autocomplétion
+    def update_search(self, text):
+        # Permet d'effacer le vieux texte et récupère ce que j'écris tout en ignorant les maj/min
+        searched_text = text.strip().casefold()
+
+        # rowCount determine le nombre de rangées dans mon tableau actuellement 
+        number_of_rows = self.my_spreadsheet.rowCount()
+
+        number_of_columns = self.my_spreadsheet.columnCount()
+
+        # Boucle qui permet de parcourir toutes les rangées de mon tableau une par une
+        # Le range renvoye une suite de nombres. Par défaut les nombres commence à 0 puis s'incrémente de 1 et s'arrete avant un chiffre spécifier (valeur de number_of_rows). 
+        # En gros, range indique combien de fois il faut looper dans row
+        # à chaque tour, le numéro de la rangée parcouru est stocké dans row
+        for row in range(number_of_rows):
+
+            # Variable pour contenir le texte présent dans la rangée parcourue
+            row_content = ""
+
+            # Boucle qui permet de parcourir toutes les colonnes de mon tableau une par une
+            # Même principe ici
+            for column in range(number_of_columns):
+                cell = self.my_spreadsheet.item(row,column)
+                row_content += cell.text().casefold()
+
+            # Si le texte qu'on cherche est présent dans la rangé on affiche la rangé
+            if searched_text in row_content:
+                self.my_spreadsheet.showRow(row)
+
+            # sinon on cache la rangé
+            else: 
+                self.my_spreadsheet.hideRow(row)
+
+        
+
+        
+
 
 
 # Début de l'application
