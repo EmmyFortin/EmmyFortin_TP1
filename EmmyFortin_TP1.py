@@ -91,37 +91,15 @@ class MainWindow(QMainWindow):
 
         # On met les Labels des colonnes (correspond aux noms des keys)
         self.my_spreadsheet.setHorizontalHeaderLabels(column_names)
+        
 
         # Afficher les données dans le tableau
-# La boucle fait le tour de tout les assets dans assets_data. À chaque fois que la boucle se fait, enumerate() donne a row_index la position(index)(qui incrémente à chaque tour) de l,asset dans le fichier .json et donne les propriété de l'asset qui correspond à l'index.
-        
-        row_index = 0
-
-        for asset in assets_data:
-
-            column_index = 0
-
-            for column_name in column_names:
-                cell_value = asset[column_name]
+        for row_index, asset in enumerate(assets_data):
+            # Pour chaque nom de colonne dans la liste column_names la fonction enumerate donne le numéro de colonne et le nom de cette colonne
+            for column_index, property_name in enumerate(column_names):
+                cell_value = asset[property_name]
                 spreadsheet_item = QTableWidgetItem(str(cell_value))
                 self.my_spreadsheet.setItem(row_index, column_index, spreadsheet_item)
-
-                column_index+=1
-
-        row_index+=1
-
-
-
-
-
-
-
-        # for row_index, asset in enumerate(assets_data):
-        #     # Pour chaque nom de colonne dans la liste column_names la fonction enumerate donne le numéro de colonne et le nom de cette colonne
-        #     for column_index, property_name in enumerate(column_names):
-        #         cell_value = asset[property_name]
-        #         spreadsheet_item = QTableWidgetItem(str(cell_value))
-        #         self.my_spreadsheet.setItem(row_index, column_index, spreadsheet_item)
 
         # Pour que le tableau s'adapte à la taille du contenu des colonnes
         self.my_spreadsheet.resizeColumnsToContents()
