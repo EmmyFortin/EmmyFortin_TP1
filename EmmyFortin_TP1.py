@@ -1,3 +1,7 @@
+import sys
+import json
+
+from PySide6.QtCore import QMargins, Qt, QFileInfo
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -11,19 +15,16 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
 )
-from PySide6.QtCore import QMargins, Qt, QFileInfo
-import sys
-import json
+
 
 # Création d'une classe pour la fenêtre principale de l'application dans
 # laquelle tous les widgets seront ajoutés et affichés.
 
 
 class MainWindow(QMainWindow):
-    """"Représente la fenêtre principale de l'application."""
+    """Représente la fenêtre principale de l'application."""
 
-
-    # __init__ = constructeur qui est appelé automatiquement quand je crée un objet. 
+    # __init__ = constructeur appelé automatiquement quand je crée un objet.
     # self = associé à cette fenêtre (MainWindow).
     def __init__(self):
         """Initialise la fenêtre principale de l'application."""
@@ -36,7 +37,7 @@ class MainWindow(QMainWindow):
         # Appelle la fonction create spreadsheet
         self.create_spreadsheet()
 
-    # Fonction pour créer et gérer mon tableau (dans la MainWindow) qui peut 
+    # Fonction pour créer et gérer mon tableau (dans la MainWindow) qui peut
     # contenir autant d'éléments que le .JSON en contient
     def create_spreadsheet(self):
         """Crée et configure le tableau qui est dans la fenêtre principale."""
@@ -47,7 +48,7 @@ class MainWindow(QMainWindow):
         # Titre pour les boutons de tri
         self.sorting_title = QLabel("Trier les Ids par")
 
-        # Création des boutons pour trier les données en ordre croissant et 
+        # Création des boutons pour trier les données en ordre croissant et
         # décroissant qui appelle leur fonction de tri après un click
         self.ascending_button = QPushButton("Ordre Ascendant")
         self.ascending_button.clicked.connect(self.sort_by_ascending)
@@ -66,7 +67,7 @@ class MainWindow(QMainWindow):
         filters_layout.addWidget(self.ascending_button)
         filters_layout.addWidget(self.descending_button)
 
-        # Création de la barre de recherche 
+        # Création de la barre de recherche
         # (QLineEdit permet d'éditer le texte)
         searchbar = QLineEdit(placeholderText="Rechercher...")
         searchbar.textChanged.connect(self.update_search)
@@ -88,31 +89,30 @@ class MainWindow(QMainWindow):
         margins = QMargins(4, 10, 4, 10)
         self.setContentsMargins(margins)
 
-        # Place le widget dans ma fenetre
+        # Place le widget dans ma fenêtre
         self.setCentralWidget(container)
 
         # Appelle la fonction load data
         self.load_data()
 
-
     # Fonction pour charger les données du fichier JSON
     def load_data(self):
-        """Charge en mémoire les données du fichier JSON reçu en paramètre"""
-        # Pour détecter les erreurs de chargement de données, il faut mettre un try
-        # Le try essaye d'exécuter les actions dans sa portée. 
-        # S'il n'y arrive pas il passe au execpt
+        """Charge en mémoire les données du fichier JSON reçu en paramètre."""
+        # Pour détecter les erreurs de chargement de données, on met un try.
+        # Le try essaye d'exécuter les actions dans sa portée.
+        # S'il n'y arrive pas il passe au execpt.
         try:
             # Récupération du fichier JSON reçu en paramètre.
-            # Le paramètre 0 est le fichier .py en lui même.
+            # Le paramètre 0 est le fichier .py lui même.
             # Le paramètre 1 est le fichier JSON reçu en paramètre.
-            # Puisqu'on doit charger un ficher à la fois, 
-            # la commande suivante détermine quel fichier JSON est utilisé : 
-            # python EmmyFortin_TP1.py data_small.json 
-            # ou 
-            # python EmmyFortin_TP1.py data_large.json 
+            # Puisqu'on doit charger un fichier à la fois,
+            # la commande suivante détermine quel fichier JSON est utilisé :
+            # python EmmyFortin_TP1.py data_small.json
+            # ou
+            # python EmmyFortin_TP1.py data_large.json
             json_file = sys.argv[1]
 
-            # Chargement des données du ficher .json reçu en paramètre
+            # Chargement des données du fichier .json reçu en paramètre
             with open(json_file, "r", encoding="utf-8") as file:
                 assets_data = json.load(file)  # assets_data = contenu du fichier JSON
 
@@ -120,7 +120,7 @@ class MainWindow(QMainWindow):
             # dans le bas de la fênetre
             file_infos = QFileInfo(json_file)
 
-            # Récupère le nom du fichier chargé, sa taille en mémoire 
+            # Récupère le nom du fichier chargé, sa taille en mémoire
             # et son nombre d'éléments
             file_name = file_infos.fileName()
             file_size = sys.getsizeof(assets_data)
@@ -137,17 +137,17 @@ class MainWindow(QMainWindow):
                 f"Nombre d'éléments du fichier : {file_elements}"
             )
 
-            # Récupérer les keys (nom des propriétés des assets) pour les afficher 
+            # Récupérer les keys (nom des propriétés des assets) pour les afficher
             # en tant que labels pour chaque colonne.
             # Création d'une liste qui va contenir le nom des colonnes
             # (nom des propriétés des assets).
             column_names = []
 
-            # Pour chaque asset (objet) dans le fichier JSON chargé, on cherche le nom
-            # de chaque propriété de l'asset ("id", "name", etc). 
-            # Si le nom de la propriété n'est pas déjà dans la liste des noms de
-            # colonne on l'ajoute. À la fin de la boucle, column_names contient
-            # le nom de toute les propriétes des assets.
+            # Pour chaque asset (objet) dans le fichier JSON chargé, on cherche 
+            # le nom de chaque propriété de l'asset ("id", "name", etc). 
+            # Si le nom de la propriété n'est pas déjà dans la liste des noms
+            # de colonne on l'ajoute. À la fin de la boucle, column_names
+            # contient le nom de toute les propriétés des assets.
             for asset in assets_data:
                 for property_name in asset:
                     if property_name not in column_names:
@@ -155,8 +155,6 @@ class MainWindow(QMainWindow):
 
             # Appelle la fonction pour remplir le tableau
             self.fill_spreadsheet(assets_data, column_names)
-
-
 
         # --------------- 3 erreures courantes demander si on peut mettre exception au lieu de mettre 3 except
         # except IndexError:
@@ -172,16 +170,15 @@ class MainWindow(QMainWindow):
 
         # ------------------------------- DEMANDER SI ON PEUT FAIRE UN EXCEPTION
 
-
-
         # Si une erreur survient lors du chargement des données, elle est stockée
         # dans la variable error.
         # Une fenêtre s'ouvre et affiche le message d'erreur.
         # Puis l'application se ferme quand on appuis sur OK.
         
-        # None est utilisé car il n'y a pas de parent direct associé au QMessageBox.
-        # Le message d'erreur doit pouvoir s'afficher même si la 
-        # fenêtre principale n'a pas pu être chargée correctement
+        # None est utilisé car il n'y a pas de parent direct associé 
+        # au QMessageBox.
+        # Le message d'erreur doit pouvoir s'afficher même si la
+        # fenêtre principale n'a pas pu être chargée correctement.
         except Exception as error:
             QMessageBox.critical(
                 None,
@@ -191,23 +188,23 @@ class MainWindow(QMainWindow):
             )
             sys.exit()
 
-
-
         # ---------------------------DEMANDER POUR LE COMPORTEMENT APRÈS AVOIR EU LE MESSAGE D'ERREUR
         # Option 1 Quand ya une erreur je vois le message et je fais ok sur le message -> le programme se ferme (sys.exit). Je dois donc corriger mannuellement le problème dans le .json
         # Option 2 Quand ya une erreur je vois le message et je fais ok sur le message -> le programme ne se ferme pas (pas de sys.exit) mais le tableau est vide (fill spreadsheet est pas appeler)
         # Option 3 Quand ya une erreur je vois le message et je fais ok sur le message -> le programme ne se ferme pas et le tableau load et précise qu'un élément est ignoré (je dois ajouter une vérification des donnée dans le try )
 
-
-
     # Fonction pour remplir le tableau avec les paramètres d'entrée.
     def fill_spreadsheet(self, assets_data, column_names):
-        """Remplit le tableau avec les données des assets et les noms de colonnes."""
+        """Remplit le tableau avec les données des assets et les noms 
+        de colonnes.
+        """
 
-        # Donne le nombre de rangés par rapport au nombre (lenght) d'assets.
+        # Donne le nombre de rangées par rapport au nombre
+        # (lenght) d'assets.
         self.my_spreadsheet.setRowCount(len(assets_data))
 
-        # Donne le nombre de colonnes par rapport au nombre (lenght) de noms de colonnes.
+        # Donne le nombre de colonnes par rapport au nombre
+        # (lenght) de noms de colonnes.
         self.my_spreadsheet.setColumnCount(len(column_names))
 
         # Donne les Labels des colonnes (correspond aux noms des keys)
@@ -215,47 +212,50 @@ class MainWindow(QMainWindow):
 
         # Afficher les données dans le tableau
         # La première boucle parcourt une rangée (un asset) à la fois.
-        # Pour chaque rangée, la deuxième boucle parcourt toutes ses colonnes.
+        # Pour chaque rangée, la deuxième boucle parcourt toutes 
+        # ses colonnes.
         # Une fois toutes les colonnes parcourues, la première boucle passe à la
         # rangée suivante et le processus recommence.
 
-        # enumerate doit d'être effectué avant la for loop pour que celle-ci sache sur 
-        # quoi elle va looper. Les variables row_index et current_asset n'ont pas encore de valeur.
-        # enumerate parcourt tous les éléments (assets) dans assets_data (contenu
-        # du fichier JSON) et donne un index à chaque asset.
-        # Le résultat du enumerate fourni à chaque tour une paire de donnée, 
+        # enumerate doit d'être effectué avant la for loop pour
+        # que celle-ci sache sur quoi elle va looper. 
+        # row_index et current_asset n'ont pas encore de valeur.
+        # enumerate parcourt tous les éléments (assets) dans assets_data
+        # (contenu du fichier JSON) et donne un index à chaque asset.
+        # Le résultat du enumerate fourni à chaque tour une paire de donnée,
         # ex: row_index = 0 et current_asset = asset1,
         #     row_index = 1 et current_asset = asset2, etc.
         # La for loop parcourt les paires une par une.
-        # À chaque tour de la for loop, l'index fournit par enumerate est stocké dans row_index
-        # et l'asset correspondant à cet index est stocké dans current_asset.
+        # À chaque tour de la for loop, l'index fournit par enumerate
+        # est stocké dans row_index et l'asset correspondant
+        # à cet index est stocké dans current_asset.
 
         for row_index, current_asset in enumerate(assets_data):
-
-            
-            # Même principe que pour les rangées, enumerate parcourt les colonnes (column_names)
-            # et récupère leur index et leur nom
+            # Même principe que pour les rangées, enumerate parcourt 
+            # les colonnes (column_names) et récupère leur index et leur nom.
 
             for column_index, current_column_name in enumerate(column_names):
-
-                # On stocke la valeur de la propriété(id, name etc.) de l'asset 
-                # parcouru qui correspond au nom de la colonne parcourue.
+                # On stocke la valeur de la propriété(id, name etc.)
+                # de l'asset parcouru qui correspond au nom de
+                # la colonne parcourue.
                 cell_value = current_asset[current_column_name]
 
                 # Converti la valeur de cell_value en string.
-                # Création d'un QTableWidgetItem pour que la valeur puisse être affiché dans le tableau.
+                # Création d'un QTableWidgetItem pour que la valeur puisse
+                # être affiché dans le tableau.
                 spreadsheet_item = QTableWidgetItem(str(cell_value))
 
-                # Permet de placer le QTableWidgetItem dans le tableau à la rangée et à la colonne
-                # présentement parcourue
+                # Permet de placer le QTableWidgetItem dans le tableau
+                # à la rangée et à la colonne présentement parcourue.
                 self.my_spreadsheet.setItem(
-                    row_index, 
-                    column_index, 
+                    row_index,
+                    column_index,
                     spreadsheet_item
                 )
 
-        # Place par défaut les éléments par ordre croissant selon leur id, même si 
-        # leur ordre est différent dans le JSON (ex: on met le NAND403-003 avant le NAND403-002).
+        # Place par défaut les éléments par ordre croissant selon leur id,
+        # même si leur ordre est différent dans le JSON
+        # (ex: on met le NAND403-003 avant le NAND403-002).
         self.sort_by_ascending()
 
         # Active le tri par colonne
@@ -263,23 +263,22 @@ class MainWindow(QMainWindow):
 
         # Adapte la largeur du tableau à la taille de son contenu pour avoir un
         # affichage complet dès l'ouverture.
-        # Calcul qui additionne la longueur (h) des headers des colonnes, 
+        # Calcul qui additionne la longueur (h) des headers des colonnes,
         # la largeur (v) des headers des rangées et
-        # l'épaisseur de la bordure exterieur du tableau multiplié par deux (gauche et droite)
+        # l'épaisseur de la bordure extérieur du tableau multiplié par deux 
+        # (gauche et droite).
         spreadsheet_width = (
             self.my_spreadsheet.horizontalHeader().length()
             + self.my_spreadsheet.verticalHeader().width()
             + self.my_spreadsheet.frameWidth() * 2
         )
 
-
         # Si une scrollbar verticale est présente, on ajoute sa largeur
         # afin d'éviter l'apparition d'une scrollbar horizontale.
 
-        # On récupère la scrollbar verticale de QTableWidget et on vérifie 
+        # On récupère la scrollbar verticale de QTableWidget et on vérifie
         # son maximum. S'il est supérieur à 0, il y a du défilement vertical.
         if self.my_spreadsheet.verticalScrollBar().maximum() > 0:
-
             # sizeHint() demande à Qt la taille recommandée pour la scrollbar
             # et width() récupère seulement la largeur de cette taille.
             spreadsheet_width += (
@@ -287,67 +286,96 @@ class MainWindow(QMainWindow):
             )
 
         self.my_spreadsheet.setMinimumWidth(spreadsheet_width)
+
+        # Ajuste la taille de la fenêtre à son contenu
         self.adjustSize()
 
-    # Fonction pour trier par id  le 0 correspond à l'index de la colonne qui contient les ids
+    # Fonction pour trier les données par id.
+    # Le 0 correspond à l'index de la colonne qui contient les ids.
+
     # Tri en ordre croissant
     def sort_by_ascending(self):
+        """Trie les données par id en ordre croissant."""
         self.my_spreadsheet.sortItems(0, Qt.AscendingOrder)
 
     # Tri en ordre décroissant
     def sort_by_descending(self):
+        """Trie les données par id en ordre décroissant."""
         self.my_spreadsheet.sortItems(0, Qt.DescendingOrder)
 
-    # Fonction de recherche et d'autocomplétion
+    # Fonction de recherche
     def update_search(self, text):
-        # Permet d'effacer le vieux texte et récupère ce que j'écris tout en ignorant les maj/min
+        """Met à jour la recherche selon le texte entré par l'utilisateur."""
+
+        # Supprime les espaces inutiles du texte recherché et ignore les
+        # majuscules et minuscules.
         searched_text = text.strip().casefold()
 
-        # rowCount determine le nombre de rangées dans mon tableau actuellement
+        # rowCount() détermine le nombre de rangées présentes.
         number_of_rows = self.my_spreadsheet.rowCount()
 
+        # columnCount() détermine le nombre de colonnes présentes.
         number_of_columns = self.my_spreadsheet.columnCount()
 
-        # Boucle qui permet de parcourir toutes les rangées de mon tableau une par une
-        # Le range renvoye une suite de nombres. Par défaut les nombres commence à 0 puis s'incrémente de 1 et s'arrete avant un chiffre spécifier (valeur de number_of_rows).
-        # En gros, range indique combien de fois il faut looper dans row
-        # à chaque tour, le numéro de la rangée parcouru est stocké dans row
-        for row in range(number_of_rows):
+        # Boucle pour vérifier si le texte recherché est présent dans le tableau
 
-            # Variable pour contenir le texte présent dans la rangée parcourue
+        # Boucle qui parcourt toutes les rangées de mon tableau
+        # une par une.
+        # range() renvoie une suite de nombres. Par défaut, les nombres
+        # commencent à 0 puis s'incrémente de 1 et s'arrêtent 
+        # avant un chiffre spécifier (la valeur de number_of_rows).
+        # En gros, range() indique combien de fois la boucle va looper
+        # dans row.
+        # À chaque tour, le numéro de la rangée parcourue est stocké
+        # dans row.
+        for row in range(number_of_rows):
+            # Variable pour contenir le texte présent dans la rangée parcourue.
             row_content = ""
 
-            # Boucle qui permet de parcourir toutes les colonnes de mon tableau une par une
-            # Même principe ici
+            # Boucle qui parcourt toutes les colonnes du tableau
+            # une par une.
+            # Même principe que pour les rangées.
             for column in range(number_of_columns):
+                # Récupère la cellule située à la rangée et à la colonne 
+                # présentement parcourue.
                 cell = self.my_spreadsheet.item(row, column)
+
+                # Ajoute le texte de chaque cellule dans row_content
                 row_content += cell.text().casefold()
 
-            # Si le texte qu'on cherche est présent dans la rangé on affiche la rangé
+            # Si le texte est présent dans la rangée, on affiche la rangée
             if searched_text in row_content:
                 self.my_spreadsheet.showRow(row)
 
-            # sinon on cache la rangé
+            # Sinon, on cache la rangée
             else:
                 self.my_spreadsheet.hideRow(row)
 
 
 # Début de l'application
-# Fonction main pour le début de l'application
+# Fonction main qui démarre l'application
 def main():
-    # QApplication est le ficher correspondant à l'application. C'est donc ce fichier (EmmyFortin_TP1.py) car c'est l'index 0 des argv. Permet l'utilisation des lignes de commandes
+    """Démarre et exécute l'application."""
+
+    # Création de l'application
+    # sys.argv contient les arguments reçu en command line.
+    # L'index 0 correspond à EmmyFortin_TP1.py et
+    # l'index 1 correspond au fichier JSON reçu en paramètre.
     app = QApplication(sys.argv)
 
-    # Création de ma fênetre (le constructeur est appellé)
+    # Création de ma fenêtre principale et appel automatique de
+    # son contructeur.
     window = MainWindow()
 
-    # Affichage de ma fenetre car elle est caché par défaut
+    # Affichage de ma fenêtre principale car elle est cachée par défaut.
     window.show()
 
-    # Boucle d'exécution de l'application
+    # Boucle d'exécution de l'application. L'application se ferme
+    # quand la boucle est finie.
     sys.exit(app.exec())
 
 
-# Indique quand mon programme commence (Si ce ficher est stand alone on appelle la fonction main )
+# Vérifie si ce fichier est en standalone (s'exécute directement)
+# Si c'est le cas, on appelle la fonction main()
 if __name__ == "__main__":
     main()
