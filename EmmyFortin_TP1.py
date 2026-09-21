@@ -148,6 +148,8 @@ class MainWindow(QMainWindow):
                 for property_name in asset:
                     if property_name not in column_names:
                         column_names.append(property_name)
+                    else:
+                        break
 
             # Appelle la fonction pour remplir le tableau
             self.fill_spreadsheet(assets_data, column_names)
