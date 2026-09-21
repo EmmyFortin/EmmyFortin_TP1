@@ -32,9 +32,9 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         # Donne un nom à mon objet MainWindow
-        self.setWindowTitle("Gestion de données des fichiers")
+        self.setWindowTitle("TP1- Tableau de gestion de données des fichiers")
 
-        # Appelle la fonction create spreadsheet
+        # Appelle la fonction create_spreadsheet()
         self.create_spreadsheet()
 
     # Fonction pour créer et gérer mon tableau (dans la MainWindow) qui peut
@@ -67,8 +67,8 @@ class MainWindow(QMainWindow):
         filters_layout.addWidget(self.ascending_button)
         filters_layout.addWidget(self.descending_button)
 
-        # Création de la barre de recherche
-        # (QLineEdit permet d'éditer le texte)
+        # Création de la barre de recherche et appel 
+        # de la fonction update_search() lors d'une modification de texte
         searchbar = QLineEdit(placeholderText="Rechercher...")
         searchbar.textChanged.connect(self.update_search)
 
@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.file_size_in_memory)
         layout.addWidget(self.number_of_elements)
 
-        # Le container contient tout les widgets
+        # Le container (Widget parent) contient tout les widgets
         container = QWidget()
         container.setLayout(layout)
 
@@ -89,10 +89,10 @@ class MainWindow(QMainWindow):
         margins = QMargins(4, 10, 4, 10)
         self.setContentsMargins(margins)
 
-        # Place le widget dans ma fenêtre
+        # Place le widget dans le centre de ma fenêtre
         self.setCentralWidget(container)
 
-        # Appelle la fonction load data
+        # Appelle la fonction load_data()
         self.load_data()
 
     # Fonction pour charger les données du fichier JSON
@@ -105,8 +105,7 @@ class MainWindow(QMainWindow):
             # Récupération du fichier JSON reçu en paramètre.
             # Le paramètre 0 est le fichier .py lui même.
             # Le paramètre 1 est le fichier JSON reçu en paramètre.
-            # Puisqu'on doit charger un fichier à la fois,
-            # la commande suivante détermine quel fichier JSON est utilisé :
+            # La commande suivante détermine quel fichier JSON est utilisé :
             # python EmmyFortin_TP1.py data_small.json
             # ou
             # python EmmyFortin_TP1.py data_large.json
@@ -139,15 +138,12 @@ class MainWindow(QMainWindow):
 
             # Récupérer les keys (nom des propriétés des assets) pour les afficher
             # en tant que labels pour chaque colonne.
-            # Création d'une liste qui va contenir le nom des colonnes
-            # (nom des propriétés des assets).
+            # Création d'une liste qui va contenir le nom de chaque colonne (keys).
             column_names = []
 
-            # Pour chaque asset (objet) dans le fichier JSON chargé, on cherche 
-            # le nom de chaque propriété de l'asset ("id", "name", etc). 
-            # Si le nom de la propriété n'est pas déjà dans la liste des noms
-            # de colonne on l'ajoute. À la fin de la boucle, column_names
-            # contient le nom de toute les propriétés des assets.
+            # Parcourt les keys (nom des propriétés des assets) de chaque objet (asset) du JSON chargé.
+            # Si la key n'est pas déjà dans column_names,on l'ajoute. 
+            # À la fin de la boucle, column_names contient toutes les keys des assets.
             for asset in assets_data:
                 for property_name in asset:
                     if property_name not in column_names:
@@ -165,7 +161,7 @@ class MainWindow(QMainWindow):
         #     sys.exit()
 
         # except json.JSONDecodeError:
-        #     messageCode = QMessageBox.critical(None,"Erreur","Le fichier .JSON est invalide.") # Pas de parent direct car on veut montrer qu'il y a une erreur de donnée avant que la grille ouvre (script charge malgré les erreurs dans le .json)
+        #     messageCode = QMessageBox.critical(None,"Erreur","Le fichier .JSON est invalide.") 
         #     sys.exit()
 
         # ------------------------------- DEMANDER SI ON PEUT FAIRE UN EXCEPTION
@@ -175,8 +171,6 @@ class MainWindow(QMainWindow):
         # Une fenêtre s'ouvre et affiche le message d'erreur.
         # Puis l'application se ferme quand on appuis sur OK.
         
-        # None est utilisé car il n'y a pas de parent direct associé 
-        # au QMessageBox.
         # Le message d'erreur doit pouvoir s'afficher même si la
         # fenêtre principale n'a pas pu être chargée correctement.
         except Exception as error:
@@ -217,32 +211,26 @@ class MainWindow(QMainWindow):
         # Une fois toutes les colonnes parcourues, la première boucle passe à la
         # rangée suivante et le processus recommence.
 
-        # enumerate doit d'être effectué avant la for loop pour
-        # que celle-ci sache sur quoi elle va looper. 
-        # row_index et current_asset n'ont pas encore de valeur.
         # enumerate parcourt tous les éléments (assets) dans assets_data
         # (contenu du fichier JSON) et donne un index à chaque asset.
-        # Le résultat du enumerate fourni à chaque tour une paire de donnée,
-        # ex: row_index = 0 et current_asset = asset1,
-        #     row_index = 1 et current_asset = asset2, etc.
+        # Le résultat du enumerate fournit à chaque tour une paire de données,
+        # ex: row_index = 0 et current_asset = asset1 etc.
         # La for loop parcourt les paires une par une.
-        # À chaque tour de la for loop, l'index fournit par enumerate
-        # est stocké dans row_index et l'asset correspondant
-        # à cet index est stocké dans current_asset.
+        # À chaque tour, l'index est stocké dans row_index et l'asset
+        #  correspondant à cet index est stocké dans current_asset.
 
         for row_index, current_asset in enumerate(assets_data):
             # Même principe que pour les rangées, enumerate parcourt 
             # les colonnes (column_names) et récupère leur index et leur nom.
 
             for column_index, current_column_name in enumerate(column_names):
-                # On stocke la valeur de la propriété(id, name etc.)
-                # de l'asset parcouru qui correspond au nom de
-                # la colonne parcourue.
+                # Stocke la valeur de la propriété (key) de l'asset parcouru
+                # qui correspond au nom de la colonne parcourue.
                 cell_value = current_asset[current_column_name]
 
-                # Converti la valeur de cell_value en string.
-                # Création d'un QTableWidgetItem pour que la valeur puisse
-                # être affiché dans le tableau.
+                # Convertit la valeur de cell_value en string.
+                # Création d'un QTableWidgetItem pour l'affichage de la valeur
+                # dans le tableau
                 spreadsheet_item = QTableWidgetItem(str(cell_value))
 
                 # Permet de placer le QTableWidgetItem dans le tableau
@@ -319,21 +307,17 @@ class MainWindow(QMainWindow):
 
         # Boucle pour vérifier si le texte recherché est présent dans le tableau
 
-        # Boucle qui parcourt toutes les rangées de mon tableau
-        # une par une.
-        # range() renvoie une suite de nombres. Par défaut, les nombres
-        # commencent à 0 puis s'incrémente de 1 et s'arrêtent 
-        # avant un chiffre spécifier (la valeur de number_of_rows).
-        # En gros, range() indique combien de fois la boucle va looper
-        # dans row.
-        # À chaque tour, le numéro de la rangée parcourue est stocké
+        # Boucle qui parcourt toutes les rangées une par une.
+        # range() renvoie une suite de nombres qui commence à 0,
+        # puis s'incrémente de 1 et s'arrêtent avant la valeur de number_of_rows.
+        # En gros, range() indique combien de fois on loop dans row.
+        # À chaque tour, l'index de la rangée parcourue est stocké
         # dans row.
         for row in range(number_of_rows):
             # Variable pour contenir le texte présent dans la rangée parcourue.
             row_content = ""
 
-            # Boucle qui parcourt toutes les colonnes du tableau
-            # une par une.
+            # Boucle qui parcourt toutes les colonnes une par une.
             # Même principe que pour les rangées.
             for column in range(number_of_columns):
                 # Récupère la cellule située à la rangée et à la colonne 
