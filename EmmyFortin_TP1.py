@@ -193,20 +193,20 @@ class MainWindow(QMainWindow):
         de colonnes.
         """
 
-        # Donne le nombre de rangées par rapport au nombre
-        # (lenght) d'assets.
+        # Donne le nombre de rangées par rapport au nombre d'assets.
         self.my_spreadsheet.setRowCount(len(assets_data))
 
-        # Donne le nombre de colonnes par rapport au nombre
-        # (lenght) de noms de colonnes.
+        # Donne le nombre de colonnes par rapport 
+        # au nombre de noms de colonnes.
         self.my_spreadsheet.setColumnCount(len(column_names))
 
         # Donne les Labels des colonnes (correspond aux noms des keys)
         self.my_spreadsheet.setHorizontalHeaderLabels(column_names)
 
         # Afficher les données dans le tableau
+
         # La première boucle parcourt une rangée (un asset) à la fois.
-        # Pour chaque rangée, la deuxième boucle parcourt toutes 
+        # Pour chaque rangée, la deuxième boucle parcourt toutes
         # ses colonnes.
         # Une fois toutes les colonnes parcourues, la première boucle passe à la
         # rangée suivante et le processus recommence.
@@ -217,7 +217,7 @@ class MainWindow(QMainWindow):
         # ex: row_index = 0 et current_asset = asset1 etc.
         # La for loop parcourt les paires une par une.
         # À chaque tour, l'index est stocké dans row_index et l'asset
-        #  correspondant à cet index est stocké dans current_asset.
+        # correspondant à cet index est stocké dans current_asset.
 
         for row_index, current_asset in enumerate(assets_data):
             # Même principe que pour les rangées, enumerate parcourt 
@@ -253,8 +253,7 @@ class MainWindow(QMainWindow):
         # affichage complet dès l'ouverture.
         # Calcul qui additionne la longueur (h) des headers des colonnes,
         # la largeur (v) des headers des rangées et
-        # l'épaisseur de la bordure extérieur du tableau multiplié par deux 
-        # (gauche et droite).
+        # l'épaisseur de la bordure extérieur du tableau multiplié par deux.
         spreadsheet_width = (
             self.my_spreadsheet.horizontalHeader().length()
             + self.my_spreadsheet.verticalHeader().width()
