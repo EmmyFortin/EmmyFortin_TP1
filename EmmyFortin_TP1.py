@@ -106,6 +106,7 @@ class MainWindow(QMainWindow):
             # Le paramètre 0 est le fichier .py lui même.
             # Le paramètre 1 est le fichier JSON reçu en paramètre.
             # La commande suivante détermine quel fichier JSON est utilisé :
+            # & "C:\WPy64-31180\python-3.11.8.amd64\python.exe"
             # python EmmyFortin_TP1.py data_small.json
             # ou
             # python EmmyFortin_TP1.py data_large.json
@@ -154,20 +155,6 @@ class MainWindow(QMainWindow):
             # Appelle la fonction pour remplir le tableau
             self.fill_spreadsheet(assets_data, column_names)
 
-        # --------------- 3 erreures courantes demander si on peut mettre exception au lieu de mettre 3 except
-        # except IndexError:
-        #     messageIndex = QMessageBox.critical(None, "Erreur", "L'index n'est pas valide")
-
-        # except FileNotFoundError:
-        #     messageFile = QMessageBox.critical(None,"Erreur","Le fichier est introuvable.")
-        #     sys.exit()
-
-        # except json.JSONDecodeError:
-        #     messageCode = QMessageBox.critical(None,"Erreur","Le fichier .JSON est invalide.") 
-        #     sys.exit()
-
-        # ------------------------------- DEMANDER SI ON PEUT FAIRE UN EXCEPTION
-
         # Si une erreur survient lors du chargement des données, elle est stockée
         # dans la variable error.
         # Une fenêtre s'ouvre et affiche le message d'erreur.
@@ -183,11 +170,6 @@ class MainWindow(QMainWindow):
                 f"Détails de l'erreur : {error}"
             )
             sys.exit()
-
-        # ---------------------------DEMANDER POUR LE COMPORTEMENT APRÈS AVOIR EU LE MESSAGE D'ERREUR
-        # Option 1 Quand ya une erreur je vois le message et je fais ok sur le message -> le programme se ferme (sys.exit). Je dois donc corriger mannuellement le problème dans le .json
-        # Option 2 Quand ya une erreur je vois le message et je fais ok sur le message -> le programme ne se ferme pas (pas de sys.exit) mais le tableau est vide (fill spreadsheet est pas appeler)
-        # Option 3 Quand ya une erreur je vois le message et je fais ok sur le message -> le programme ne se ferme pas et le tableau load et précise qu'un élément est ignoré (je dois ajouter une vérification des donnée dans le try )
 
     # Fonction pour remplir le tableau avec les paramètres d'entrée.
     def fill_spreadsheet(self, assets_data, column_names):
